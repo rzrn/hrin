@@ -22,12 +22,6 @@
 
 #include <error.h>
 
-static ErrorTag availableErrorTag = 0;
-
-ErrorTag newErrorTag(void) {
-    return availableErrorTag++;
-}
-
 static char errorMessageBuffer[2048] = {0};
 static ErrorTag thrownError;
 
