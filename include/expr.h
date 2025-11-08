@@ -120,6 +120,6 @@ void * trivMove(Region * dest, Region * src, void *);
 static inline size_t ellipsis(char * buf)
 { strcpy(buf, "..."); return 3; }
 
-#define IFNRET(x) if ((x) == NULL) return NULL;
+#define IFNRET(x) do { if ((x) == NULL) return NULL; } while (false)
 
 #endif

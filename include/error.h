@@ -29,6 +29,6 @@ ErrorTag getThrownError(void);
 
 extern ErrorTag EOFErrorTag, SyntaxErrorTag, ApplyErrorTag, UnknownErrorTag, NameErrorTag, OOMErrorTag, TypeErrorTag, RegionErrorTag;
 
-#define ARITY(expected, given) if ((expected) != (given)) return throw(TypeErrorTag, "expected %zu argument(s) but %zu were given", (expected), (given));
+#define ARITY(expected, given) do { if ((expected) != (given)) return throw(TypeErrorTag, "expected %zu argument(s) but %zu were given", (expected), (given)); } while (false)
 
 #endif
