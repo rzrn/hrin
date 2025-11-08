@@ -1,4 +1,6 @@
+/nongithub
 Makefile.depend
 Makefile.depend.bak
 hrin
 *.o
+*.a
