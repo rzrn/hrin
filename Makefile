@@ -1,31 +1,43 @@
-CC     = cc
-CFLAGS = -g -Iinclude/ -std=c99 -Wall -Wextra -pedantic
-BINARY = hrin
-CFILES = src/io.c src/lexer.c src/parser.c src/avl.c src/trie.c src/array.c\
-         src/objects/nil.c src/objects/atom.c src/objects/cc.c src/objects/integer.c\
-         src/objects/byte.c src/objects/string.c src/objects/lambda.c src/objects/extern.c\
-         src/objects/boolean.c src/expr.c src/error.c src/hrin.c
-OFILES = $(CFILES:.c=.o)
-DEPEND = Makefile.depend
+# Copyright © 2026 rzrn
 
-all: $(BINARY)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 
-.SUFFIXES: .c .o
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 
-.c.o:
-	$(CC) $(CFLAGS) -c $< -o $@
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-$(BINARY): $(OFILES)
-	$(CC) -o $@ $(OFILES)
+HRINLIBS = bin/hrin.a bin/hrinlib.a bin/baselib.a bin/commonlib.a
+
+bin/hrin: $(HRINLIBS)
+	$(CC) $(LDFLAGS) $(HRINLIBS) -o $@
+
+all: bin/hrin
+
+bin/baselib.a: src/baselib/byte.o src/baselib/integer.o src/baselib/string.o
+	$(AR) $(ARFLAGS) $@ $?
+
+bin/commonlib.a: src/commonlib/array.o src/commonlib/avl.o src/commonlib/trie.o
+	$(AR) $(ARFLAGS) $@ $?
+
+bin/hrinlib.a: src/hrinlib/atom.o src/hrinlib/boolean.o src/hrinlib/cc.o\
+               src/hrinlib/error.o src/hrinlib/expr.o src/hrinlib/extern.o\
+               src/hrinlib/lambda.o src/hrinlib/nil.o
+	$(AR) $(ARFLAGS) $@ $?
+
+bin/hrin.a: src/hrin/hrin.o src/hrin/io.o src/hrin/lexer.o src/hrin/parser.o
+	$(AR) $(ARFLAGS) $@ $?
 
 clean:
-	rm -f $(BINARY) $(OFILES)
+	@find src/ -name '*.o' -exec echo rm -f {} \; -exec rm -rf {} \;
+	@find bin/ -name '*.a' -exec echo rm -f {} \; -exec rm -rf {} \;
+	rm -f bin/hrin
 
-depend:
-	echo > $(DEPEND)
-	makedepend -I`$(CC) --print-file-name=include` -f$(DEPEND) -- $(CFLAGS) $(CFILES)
-
-$(DEPEND):
-	touch $(DEPEND)
-
-include $(DEPEND)
+.c.o:
+	$(CC) $(CFLAGS) -Iinclude/ -c $< -o $@

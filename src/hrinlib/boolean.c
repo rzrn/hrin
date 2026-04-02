@@ -1,0 +1,124 @@
+/*
+    Copyright © 2024–2025 rzrn
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include <commonlib/basic.h>
+
+#include <hrinlib/boolean.h>
+#include <hrinlib/extern.h>
+
+static size_t showBoolean(char * buf, size_t size, void * value) {
+    if (value == &exprTrue) {
+        if (size <= 4) return ellipsis(buf);
+        strcpy(buf, "true"); return 4;
+    }
+
+    if (value == &exprFalse) {
+        if (size <= 5) return ellipsis(buf);
+        strcpy(buf, "false"); return 5;
+    }
+
+    return 0;
+}
+
+ExprTag exprBooleanTag = {
+    .eval   = trivEval,
+    .apply  = applyThrowError,
+    .show   = showBoolean,
+    .delete = trivDelete,
+    .move   = trivMove,
+    .equal  = equalByRef,
+    .size   = 0
+};
+
+ExprBoolean exprTrue, exprFalse;
+
+void * externNot(Region * region, Array * xs) {
+    ARITY(1, xs->size);
+
+    void * o = eval(region, getArray(xs, 0)); IFNRET(o);
+
+    if (o == &exprFalse) return &exprTrue;
+    if (o == &exprTrue)  return &exprFalse;
+
+    return throw(TypeErrorTag, "%s expected to be a boolean", showExpr(o));
+}
+
+void * externAndalso(Region * region, Array * xs) {
+    for (size_t i = 0; i < xs->size; i++) {
+        void * o = eval(region, getArray(xs, i)); IFNRET(o);
+        if (o == &exprFalse) return &exprFalse;
+    }
+
+    return &exprTrue;
+}
+
+void * externOrelse(Region * region, Array * xs) {
+    for (size_t i = 0; i < xs->size; i++) {
+        void * o = eval(region, getArray(xs, i)); IFNRET(o);
+        if (o == &exprTrue) return &exprTrue;
+    }
+
+    return &exprFalse;
+}
+
+void * externIte(Region * region, Array * xs) {
+    ARITY(3, xs->size);
+
+    void * b = eval(region, getArray(xs, 0)); IFNRET(b);
+
+    if (b == &exprTrue)  return eval(region, getArray(xs, 1));
+    if (b == &exprFalse) return eval(region, getArray(xs, 2));
+
+    return throw(TypeErrorTag, "%s expected to be a boolean", showExpr(b));
+}
+
+void * externEqual(Region * region, Array * xs) {
+    ARITY(2, xs->size);
+
+    void * o1 = eval(region, getArray(xs, 0)); IFNRET(o1);
+    void * o2 = eval(region, getArray(xs, 1)); IFNRET(o2);
+
+    return newBool(equal(o1, o2));
+}
+
+void * externRefeq(Region * region, Array * xs) {
+    ARITY(2, xs->size);
+
+    void * o1 = eval(region, getArray(xs, 0)); IFNRET(o1);
+    void * o2 = eval(region, getArray(xs, 1)); IFNRET(o2);
+
+    return newBool(o1 == o2);
+}
+
+void initBooleanTag(Region * region) {
+    newExprImmortal(&exprTag, &exprBooleanTag, NULL);
+    newExprImmortal(&exprBooleanTag, &exprTrue, &exprFalse, NULL);
+
+    setVars(
+        region->scope,
+        "boolean", &exprBooleanTag,
+        "tt",      &exprTrue,
+        "ff",      &exprFalse,
+        "not",     newExtern(region, externNot),
+        "andalso", newExtern(region, externAndalso),
+        "orelse",  newExtern(region, externOrelse),
+        "ite",     newExtern(region, externIte),
+        "equal?",  newExtern(region, externEqual),
+        "refeq?",  newExtern(region, externRefeq),
+        NULL
+    );
+}
