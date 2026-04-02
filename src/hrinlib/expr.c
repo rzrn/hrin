@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -121,8 +121,8 @@ void * newExpr(Region * region, ExprTag * tag) {
     Expr * o = malloc(tag->size);
     if (o == NULL) return throw(OOMErrorTag, NULL);
 
-    o->tag      = tag;
-    o->lifetime = -1;
+    o->tag     = tag;
+    o->barrier = -1;
 
     takeOwnership(region, o);
 
@@ -192,8 +192,8 @@ void * move(Region * dest, Expr * o) {
     if (o->tag->move(dest, src, o) == NULL)
         retptr = NULL;
 
-    if (dest->index < o->lifetime) {
-        throw(RegionErrorTag, "attempt to move value beyond its lifetime: %s", showExpr(o));
+    if (dest->index < o->barrier) {
+        throw(RegionErrorTag, "attempt to move value beyond its barrier: %s", showExpr(o));
         invalidate(o);
         retptr = NULL;
     }

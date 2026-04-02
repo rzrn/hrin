@@ -105,21 +105,21 @@ void * externPrint(Region * region, Array * xs) {
     return &exprNil;
 }
 
-void * externLifetime(Region * region, Array * xs) {
+void * externBarrier(Region * region, Array * xs) {
     switch (xs->size) {
         case 0: return newInteger(region, region->index);
         case 1: {
             Expr * o = eval(region, getArray(xs, 0)); IFNRET(o);
-            return newInteger(region, o->lifetime);
+            return newInteger(region, o->barrier);
         }
         case 2: {
             Expr * o = eval(region, getArray(xs, 0)); IFNRET(o);
             ExprInteger * i = evalEnsureInteger(region, getArray(xs, 1)); IFNRET(i);
 
-            if (o->owner->index < i->value) return throw(RegionErrorTag, "lifetime cannot be shorter than the lifetime of the owning region");
-            if (i->value < o->lifetime) return throw(RegionErrorTag, "lifetime should be non-increasing");
+            if (o->owner->index < i->value) return throw(RegionErrorTag, "barrier cannot be set before the owning region");
+            if (i->value < o->barrier) return throw(RegionErrorTag, "barrier cannot be set after the existing barrier");
 
-            o->lifetime = i->value; return &exprNil;
+            o->barrier = i->value; return &exprNil;
         }
         default: return throw(TypeErrorTag, "expected at most 2 arguments but %zu were given", xs->size);
     }
@@ -228,7 +228,7 @@ int main(int argc, char * argv[]) {
     setVar(rootRegion->scope, "quote",     newExtern(rootRegion, externQuote));
     setVar(rootRegion->scope, "eval",      newExtern(rootRegion, externEval));
     setVar(rootRegion->scope, "print!",    newExtern(rootRegion, externPrint));
-    setVar(rootRegion->scope, "lifetime",  newExtern(rootRegion, externLifetime));
+    setVar(rootRegion->scope, "barrier",   newExtern(rootRegion, externBarrier));
     setVar(rootRegion->scope, "tobyte",    newExtern(rootRegion, externToByte));
     setVar(rootRegion->scope, "tagof",     newExtern(rootRegion, externTagof));
 

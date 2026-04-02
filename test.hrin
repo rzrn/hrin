@@ -9,7 +9,7 @@ define[implies; Λ[P; Q; list[quote[orelse]; list[quote[not]; P]; Q]]];
 
 define[xgetter; Λ[quote[x]]];
 
-define[borrow; Λ[x; list[quote[lifetime]; x; list[quote[lifetime]]]]];
+define[borrow; Λ[x; list[quote[barrier]; x; list[quote[barrier]]]]];
 
 progn[
   deflocal[locvar; 11];
