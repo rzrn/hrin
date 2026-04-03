@@ -26,9 +26,9 @@ bin/baselib.a: src/baselib/byte.o src/baselib/integer.o src/baselib/string.o
 bin/commonlib.a: src/commonlib/array.o src/commonlib/avl.o src/commonlib/trie.o
 	$(AR) $(ARFLAGS) $@ $?
 
-bin/hrinlib.a: src/hrinlib/atom.o src/hrinlib/boolean.o src/hrinlib/cc.o\
-               src/hrinlib/error.o src/hrinlib/expr.o src/hrinlib/extern.o\
-               src/hrinlib/lambda.o src/hrinlib/nil.o
+bin/hrinlib.a: src/hrinlib/atom.o src/hrinlib/basic.o src/hrinlib/boolean.o\
+               src/hrinlib/cc.o src/hrinlib/error.o src/hrinlib/expr.o\
+               src/hrinlib/extern.o src/hrinlib/lambda.o src/hrinlib/nil.o
 	$(AR) $(ARFLAGS) $@ $?
 
 bin/hrin.a: src/hrin/hrin.o src/hrin/io.o src/hrin/lexer.o src/hrin/parser.o

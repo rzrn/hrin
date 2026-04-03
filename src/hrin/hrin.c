@@ -20,15 +20,13 @@
 
 #include <commonlib/basic.h>
 
+#include <hrinlib/basic.h>
 #include <hrinlib/error.h>
 #include <hrinlib/expr.h>
 
-#include <hrinlib/boolean.h>
 #include <hrinlib/extern.h>
-#include <hrinlib/lambda.h>
 #include <hrinlib/atom.h>
 #include <hrinlib/nil.h>
-#include <hrinlib/cc.h>
 
 #include <baselib/integer.h>
 #include <baselib/string.h>
@@ -205,22 +203,12 @@ ErrorTag scanLine(FILE * file) {
 int main(int argc, char * argv[]) {
     initExpr();
 
-    Scope * globalScope = newScope(NULL);
-    globalScope->lexical = false;
+    rootRegion = initHrinlib();
+    Scope * globalScope = rootRegion->scope;
 
-    rootRegion = newRegion(NULL);
-    rootRegion->scope = globalScope;
-
-    initExternTag(rootRegion); // Everything below can rely on `newExtern`.
-
-    initNilTag(rootRegion);
-    initCCTag(rootRegion);
-    initBooleanTag(rootRegion);
-    initAtomTag(rootRegion);
-    initIntegerTag(rootRegion);
     initByteTag(rootRegion);
     initStringTag(rootRegion);
-    initLexicalTags(rootRegion);
+    initIntegerTag(rootRegion);
 
     setVar(rootRegion->scope, "define",    newExtern(rootRegion, externDefine));
     setVar(rootRegion->scope, "progn",     newExtern(rootRegion, externProgn));
