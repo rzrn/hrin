@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LEXER_H
-#define LEXER_H
+#ifndef HRIN_LEXER_H
+#define HRIN_LEXER_H
 
 #include <stdio.h>
 

@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PARSER_H
-#define PARSER_H
+#ifndef HRIN_PARSER_H
+#define HRIN_PARSER_H
 
 #include <stdio.h>
 

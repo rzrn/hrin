@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LAMBDA_H
-#define LAMBDA_H
+#ifndef HRINLIB_LAMBDA_H
+#define HRINLIB_LAMBDA_H
 
 #include <hrinlib/expr.h>
 

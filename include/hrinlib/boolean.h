@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BOOLEAN_H
-#define BOOLEAN_H
+#ifndef HRINLIB_BOOLEAN_H
+#define HRINLIB_BOOLEAN_H
 
 #include <hrinlib/expr.h>
 

@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ERROR_H
-#define ERROR_H
+#ifndef HRINLIB_ERROR_H
+#define HRINLIB_ERROR_H
 
 typedef char * ErrorTag;
 

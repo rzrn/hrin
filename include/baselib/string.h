@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STRING_H
-#define STRING_H
+#ifndef BASELIB_STRING_H
+#define BASELIB_STRING_H
 
 #include <hrinlib/expr.h>
 

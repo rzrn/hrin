@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NIL_H
-#define NIL_H
+#ifndef HRINLIB_NIL_H
+#define HRINLIB_NIL_H
 
 #include <hrinlib/expr.h>
 

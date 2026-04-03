@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef IO_H
-#define IO_H
+#ifndef HRIN_IO_H
+#define HRIN_IO_H
 
 #include <stdio.h>
 

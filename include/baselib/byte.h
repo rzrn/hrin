@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BYTE_H
-#define BYTE_H
+#ifndef BASELIB_BYTE_H
+#define BASELIB_BYTE_H
 
 #include <hrinlib/expr.h>
 

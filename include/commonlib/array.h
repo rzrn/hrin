@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ARRAY_H
-#define ARRAY_H
+#ifndef COMMONLIB_ARRAY_H
+#define COMMONLIB_ARRAY_H
 
 #include <stdlib.h>
 

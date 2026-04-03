@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TRIE_H
-#define TRIE_H
+#ifndef COMMONLIB_TRIE_H
+#define COMMONLIB_TRIE_H
 
 typedef struct {
     void * next[2];

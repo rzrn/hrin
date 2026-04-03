@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INTEGER_H
-#define INTEGER_H
+#ifndef BASELIB_INTEGER_H
+#define BASELIB_INTEGER_H
 
 #include <limits.h>
 

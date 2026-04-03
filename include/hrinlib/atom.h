@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ATOM_H
-#define ATOM_H
+#ifndef HRINLIB_ATOM_H
+#define HRINLIB_ATOM_H
 
 #include <hrinlib/expr.h>
 

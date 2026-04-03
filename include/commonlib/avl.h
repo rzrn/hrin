@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef AVL_H
-#define AVL_H
+#ifndef COMMONLIB_AVL_H
+#define COMMONLIB_AVL_H
 
 #include <stdbool.h>
 

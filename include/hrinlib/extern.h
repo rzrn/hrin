@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef EXTERN_H
-#define EXTERN_H
+#ifndef HRINLIB_EXTERN_H
+#define HRINLIB_EXTERN_H
 
 #include <hrinlib/expr.h>
 

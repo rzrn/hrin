@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef COMMONLIB_BASIC_H
+#define COMMONLIB_BASIC_H
 
 #include <string.h>
 #include <stdlib.h>

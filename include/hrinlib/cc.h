@@ -15,8 +15,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CC_H
-#define CC_H
+#ifndef HRINLIB_CC_H
+#define HRINLIB_CC_H
 
 #include <hrinlib/expr.h>
 
