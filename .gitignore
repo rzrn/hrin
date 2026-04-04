@@ -1,6 +1,6 @@
 /nongithub
-bin/makedepend.mk
-bin/makedepend.mk.bak
-bin/hrin
+/bin/makedepend.mk
+/bin/makedepend.mk.bak
+/bin/hrin
 *.o
 *.a
