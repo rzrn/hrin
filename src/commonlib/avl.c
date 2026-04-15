@@ -21,10 +21,10 @@
 #include <commonlib/basic.h>
 #include <commonlib/avl.h>
 
-inline static int height(TreeNode * n)
+static inline int height(TreeNode * n)
 { return n == NULL ? 0 : n->height; }
 
-inline static void updateHeightTreeNode(TreeNode * n)
+static inline void updateHeightTreeNode(TreeNode * n)
 { n->height = max(height(n->left), height(n->right)) + 1; }
 
 static TreeNode * rotrr(TreeNode * n) {
@@ -53,20 +53,20 @@ static TreeNode * rotll(TreeNode * n) {
     return nr;
 }
 
-inline static TreeNode * rotlr(TreeNode * n) {
+static inline TreeNode * rotlr(TreeNode * n) {
     n->left = rotll(n->left);
     return rotrr(n);
 }
 
-inline static TreeNode * rotrl(TreeNode * n) {
+static inline TreeNode * rotrl(TreeNode * n) {
     n->right = rotrr(n->right);
     return rotll(n);
 }
 
-inline static int bf(TreeNode * n)
+static inline int bf(TreeNode * n)
 { return n == NULL ? 0 : height(n->left) - height(n->right); }
 
-inline static TreeNode * rebalance(TreeNode * n) {
+static inline TreeNode * rebalance(TreeNode * n) {
     if (n == NULL) return NULL;
     updateHeightTreeNode(n);
 
@@ -79,7 +79,7 @@ inline static TreeNode * rebalance(TreeNode * n) {
     return n;
 }
 
-inline static TreeNode * newTreeNode(AVLTree * T, void * value) {
+static inline TreeNode * newTreeNode(AVLTree * T, void * value) {
     TreeNode * const nsucc = T->head;
     TreeNode * n = malloc(sizeof(TreeNode));
 
@@ -110,7 +110,7 @@ static TreeNode * insertTreeNode(AVLTree * T, TreeNode * n, void * value) {
     return rebalance(n);
 }
 
-inline static TreeNode * minTreeNode(TreeNode * n) {
+static inline TreeNode * minTreeNode(TreeNode * n) {
     while (n->left != NULL)
         n = n->left;
 
