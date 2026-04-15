@@ -179,17 +179,17 @@ bool equal(void * value1, void * value2) {
 }
 
 void * move(Region * dest, Expr * o) {
+    Region * src = o->owner;
+
+    if (src == NULL || src->index <= dest->index)
+        return o;
+
     if (dest == NULL) {
         // E.g., this is possible for `setcar!` to an immortal cons cell.
         throw(RegionErrorTag, "attempt to immortalize heap-allocated value: %s", showExpr(o));
         invalidate(o);
         return NULL;
     }
-
-    Region * src = o->owner;
-
-    if (src == NULL || src->index <= dest->index)
-        return o;
 
     deleteAVLTree(&src->pool, o);
     takeOwnership(dest, o);
