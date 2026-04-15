@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ static void * moveCC(Region * dest, Region * src, void * value) {
 
 static bool equalCC(void * value1, void * value2) {
     ExprCC * expr1 = value1, * expr2 = value2;
-    return value1 == value2 || (equal(expr1->car, expr2->car) && equal(expr2->cdr, expr2->cdr));
+    return value1 == value2 || (equal(expr1->car, expr2->car) && equal(expr1->cdr, expr2->cdr));
 }
 
 ExprTag exprCCTag = {
