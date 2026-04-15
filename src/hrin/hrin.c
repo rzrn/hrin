@@ -114,8 +114,12 @@ void * externBarrier(Region * region, Array * xs) {
             Expr * o = eval(region, getArray(xs, 0)); IFNRET(o);
             ExprInteger * i = evalEnsureInteger(region, getArray(xs, 1)); IFNRET(i);
 
-            if (o->owner->index < i->value) return throw(RegionErrorTag, "barrier cannot be set before the owning region");
-            if (i->value < o->barrier) return throw(RegionErrorTag, "barrier cannot be set after the existing barrier");
+            if (o->owner == NULL || o->owner->index < i->value) return throw(
+                RegionErrorTag, "barrier cannot be set before the owning region"
+            );
+            if (i->value < o->barrier) return throw(
+                RegionErrorTag, "barrier cannot be set after the existing barrier"
+            );
 
             o->barrier = i->value; return &exprNil;
         }
