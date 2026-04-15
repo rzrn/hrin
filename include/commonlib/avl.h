@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ typedef struct _TreeNode TreeNode;
 
 typedef struct {
     TreeNode * root;
+    TreeNode * head;
 } AVLTree;
 
 struct _TreeNode {
@@ -31,6 +32,8 @@ struct _TreeNode {
     int height;
     TreeNode * left;
     TreeNode * right;
+    TreeNode * pred;
+    TreeNode * succ;
 };
 
 AVLTree newAVLTree(void);

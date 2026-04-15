@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -104,30 +104,16 @@ static void deleteLexical(void * value) {
     freeArray(&expr->vars);
 }
 
-static void * moveTree(Region * region, void * n, int nbit) {
-    void * retptr = n;
+static inline void * moveTrie(Region * region, Trie * T) {
+    void * retptr = T;
 
-    if (nbit == 0) {
-        BinaryTreeValue * btv = n;
-        if (btv->value != NULL && move(region, btv->value) == NULL)
+    for (BinaryTreeValue * nv = T->head2; nv != NULL; nv = nv->node.succ) {
+        if (nv->value != NULL && move(region, nv->value) == NULL)
             retptr = NULL;
-
-        nbit = 8;
     }
-
-    BinaryTreeNode * btn = n;
-
-    if (btn->next[0] != NULL && moveTree(region, btn->next[0], nbit - 1) == NULL)
-        retptr = NULL;
-
-    if (btn->next[1] != NULL && moveTree(region, btn->next[1], nbit - 1) == NULL)
-        retptr = NULL;
 
     return retptr;
 }
-
-static inline void * moveTrie(Region * region, Trie * T)
-{ return moveTree(region, &T->root, 0); }
 
 static void * moveLexical(Region * dest, Region * src, void * value) {
     UNUSED(src);

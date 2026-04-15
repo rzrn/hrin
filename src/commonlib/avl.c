@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -79,24 +79,31 @@ inline static TreeNode * rebalance(TreeNode * n) {
     return n;
 }
 
-inline static TreeNode * newTreeNode(void * value) {
+inline static TreeNode * newTreeNode(AVLTree * T, void * value) {
+    TreeNode * const nsucc = T->head;
     TreeNode * n = malloc(sizeof(TreeNode));
 
-    n->value  = value;
+    T->head   = n;
+    n->pred   = NULL;
+    n->succ   = nsucc;
     n->left   = NULL;
     n->right  = NULL;
+    n->value  = value;
     n->height = 1;
+
+    if (nsucc != NULL)
+        nsucc->pred = n;
 
     return n;
 }
 
-static TreeNode * insertTreeNode(TreeNode * n, void * value) {
-    if (n == NULL) return newTreeNode(value);
+static TreeNode * insertTreeNode(AVLTree * T, TreeNode * n, void * value) {
+    if (n == NULL) return newTreeNode(T, value);
 
     if (value < n->value)
-        n->left = insertTreeNode(n->left, value);
+        n->left = insertTreeNode(T, n->left, value);
     else if (value > n->value)
-        n->right = insertTreeNode(n->right, value);
+        n->right = insertTreeNode(T, n->right, value);
     else
         return n;
 
@@ -110,42 +117,57 @@ inline static TreeNode * minTreeNode(TreeNode * n) {
     return n;
 }
 
-static TreeNode * deleteTreeNode(TreeNode * n, void * value) {
+static inline void linkTreeNode(TreeNode * n1, TreeNode * n2) {
+    if (n1 != NULL) n1->succ = n2;
+    if (n2 != NULL) n2->pred = n1;
+}
+
+static TreeNode * deleteTreeNode(AVLTree * T, TreeNode * n, void * value) {
     if (n == NULL) return NULL;
 
     if (value < n->value)
-        n->left = deleteTreeNode(n->left, value);
+        n->left = deleteTreeNode(T, n->left, value);
     else if (value > n->value)
-        n->right = deleteTreeNode(n->right, value);
+        n->right = deleteTreeNode(T, n->right, value);
     else if (n->left == NULL) {
         TreeNode * nr = n->right;
+
+        linkTreeNode(n->pred, n->succ);
+        if (T->head == n) T->head = n->succ;
+
         free(n); return nr;
     } else if (n->right == NULL) {
         TreeNode * nl = n->left;
+
+        linkTreeNode(n->pred, n->succ);
+        if (T->head == n) T->head = n->succ;
+
         free(n); return nl;
     } else {
         TreeNode * nsucc = minTreeNode(n->right);
 
         n->value = nsucc->value;
-        n->right = deleteTreeNode(n->right, nsucc->value);
+        n->right = deleteTreeNode(T, n->right, nsucc->value);
     }
 
     return rebalance(n);
 }
 
 static bool findTreeNode(TreeNode * n, void * value) {
-    if (n == NULL) return false;
+    while (n != NULL) {
+        if (value < n->value)
+            n = n->left;
+        else if (value > n->value)
+            n = n->right;
+        else
+            return true;
+    }
 
-    if (value < n->value)
-        return findTreeNode(n->left, value);
-    else if (value > n->value)
-        return findTreeNode(n->right, value);
-    else
-        return true;
+    return false;
 }
 
 AVLTree newAVLTree(void) {
-    return (AVLTree) {.root = NULL};
+    return (AVLTree) {.root = NULL, .head = NULL};
 }
 
 bool findAVLTree(AVLTree * T, void * value) {
@@ -153,9 +175,9 @@ bool findAVLTree(AVLTree * T, void * value) {
 }
 
 void insertAVLTree(AVLTree * T, void * value) {
-    T->root = insertTreeNode(T->root, value);
+    T->root = insertTreeNode(T, T->root, value);
 }
 
 void deleteAVLTree(AVLTree * T, void * value) {
-    T->root = deleteTreeNode(T->root, value);
+    T->root = deleteTreeNode(T, T->root, value);
 }

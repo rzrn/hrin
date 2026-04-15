@@ -232,17 +232,16 @@ Region * newRegion(Region * parent) {
     return region;
 }
 
-static void freeTreePool(TreeNode * n) {
-    if (n != NULL) {
-        freeTreePool(n->left);
-        freeTreePool(n->right);
-        delete(n->value);
-        free(n);
+static void freeTreePool(AVLTree * T) {
+    for (TreeNode * n = T->head; n != NULL;) {
+        TreeNode * nsucc = n->succ;
+        delete(n->value); free(n);
+        n = nsucc;
     }
 }
 
 void deleteRegion(Region * region) {
-    freeTreePool(region->pool.root);
+    freeTreePool(&region->pool);
     free(region);
 }
 

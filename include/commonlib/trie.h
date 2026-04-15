@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 
 typedef struct {
     void * next[2];
+    void * pred;
+    void * succ;
 } BinaryTreeNode;
 
 typedef struct {
@@ -28,7 +30,9 @@ typedef struct {
 } BinaryTreeValue;
 
 typedef struct {
-    BinaryTreeValue root;
+    BinaryTreeValue * root;
+    BinaryTreeNode  * head1;
+    BinaryTreeValue * head2;
 } Trie;
 
 Trie newTrie(void);
