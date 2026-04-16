@@ -36,12 +36,32 @@ static void * applyTag(Region * region, void * value, Array * xs) {
     return newBool(o->tag == value);
 }
 
+ExprTag exprTag = {
+    .eval   = trivEval,
+    .apply  = applyTag,
+    .show   = showTag,
+    .delete = trivDelete,
+    .move   = trivMove,
+    .equal  = equalByRef,
+    .size   = 0
+};
+
 static size_t showErrval(char * buf, size_t size, void * value) {
     UNUSED(value);
 
     if (size <= 7) return ellipsis(buf);
     strcpy(buf, "#ERRVAL"); return 7;
 }
+
+static ExprTag exprErrvalTag = {
+    .eval   = trivEval,
+    .apply  = applyThrowError,
+    .show   = showErrval,
+    .delete = trivDelete,
+    .move   = trivMove,
+    .equal  = equalByRef,
+    .size   = 0
+};
 
 void * applyThrowError(Region * region, void * x, Array * xs) {
     UNUSED(region); UNUSED(xs);
@@ -69,26 +89,6 @@ void * trivMove(Region * dest, Region * src, void * value) {
     return value;
 }
 
-ExprTag exprTag = {
-    .eval   = trivEval,
-    .apply  = applyTag,
-    .show   = showTag,
-    .delete = trivDelete,
-    .move   = trivMove,
-    .equal  = equalByRef,
-    .size   = 0
-};
-
-static ExprTag exprErrvalTag = {
-    .eval   = trivEval,
-    .apply  = applyThrowError,
-    .show   = showErrval,
-    .delete = trivDelete,
-    .move   = trivMove,
-    .equal  = equalByRef,
-    .size   = 0
-};
-
 void initExpr(void) {
     newExprImmortal(&exprTag, &exprTag, &exprErrvalTag, NULL);
 }
@@ -106,6 +106,22 @@ Expr * getVar(Rho * rho, const char * x) {
     }
 
     return NULL;
+}
+
+void setVars(Rho * rho, ...) {
+    va_list argv;
+
+    va_start(argv, rho);
+
+    for (;;) {
+        const char * x = va_arg(argv, const char *);
+        if (x == NULL) break;
+
+        void * o = va_arg(argv, void *);
+        setVar(rho, x, o);
+    }
+
+    va_end(argv);
 }
 
 static inline void takeOwnership(Region * region, Expr * o) {
@@ -166,16 +182,16 @@ void delete(void * value) {
     free(value);
 }
 
+bool equal(void * value1, void * value2) {
+    if (tagof(value1) != tagof(value2)) return false;
+    return tagof(value1)->equal(value1, value2);
+}
+
 void invalidate(void * value) {
     Expr * expr = value;
 
     expr->tag->delete(value);
     expr->tag = &exprErrvalTag;
-}
-
-bool equal(void * value1, void * value2) {
-    if (tagof(value1) != tagof(value2)) return false;
-    return tagof(value1)->equal(value1, value2);
 }
 
 void * move(Region * dest, Expr * o) {
@@ -257,20 +273,4 @@ const char * showExpr(void * value) {
 
     show(buf, sizeof(buf), value);
     return buf;
-}
-
-void setVars(Rho * rho, ...) {
-    va_list argv;
-
-    va_start(argv, rho);
-
-    for (;;) {
-        const char * x = va_arg(argv, const char *);
-        if (x == NULL) break;
-
-        void * o = va_arg(argv, void *);
-        setVar(rho, x, o);
-    }
-
-    va_end(argv);
 }
