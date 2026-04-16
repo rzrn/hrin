@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 #include <hrinlib/expr.h>
 
-typedef struct { Expr _expr; Scope * scope; Array vars; void * value; } ExprLexical;
+typedef struct { Expr _expr; Rho * rho; Array vars; void * value; } ExprLexical;
 
 extern ExprTag exprLambdaTag, exprMacroTag;
 void initLexicalTags(Region *);

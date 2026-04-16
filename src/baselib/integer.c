@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -199,7 +199,7 @@ void initIntegerTag(Region * region) {
     newExprImmortal(&exprTag, &exprIntegerTag, NULL);
 
     setVars(
-        region->scope,
+        region->rho,
         "integer", &exprIntegerTag,
         "addi",    newExtern(region, externAddi),
         "subi",    newExtern(region, externSubi),

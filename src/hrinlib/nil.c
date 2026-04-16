@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,5 +40,5 @@ void initNilTag(Region * region) {
     newExprImmortal(&exprTag, &exprNilTag, NULL);
     newExprImmortal(&exprNilTag, &exprNil, NULL);
 
-    setVar(region->scope, "nil", &exprNil);
+    setVar(region->rho, "nil", &exprNil);
 }

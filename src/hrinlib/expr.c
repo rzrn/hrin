@@ -93,16 +93,16 @@ void initExpr(void) {
     newExprImmortal(&exprTag, &exprTag, &exprErrvalTag, NULL);
 }
 
-void setVar(Scope * scope, const char * x, void * o) {
-    setTrie(&scope->context, x, o);
+void setVar(Rho * rho, const char * x, void * o) {
+    setTrie(&rho->trie, x, o);
 }
 
-Expr * getVar(Scope * scope, const char * x) {
-    while (scope != NULL) {
-        Expr * retval = findTrie(&scope->context, x);
+Expr * getVar(Rho * rho, const char * x) {
+    while (rho != NULL) {
+        Expr * retval = findTrie(&rho->trie, x);
         if (retval != NULL) return retval;
 
-        scope = scope->next;
+        rho = rho->next;
     }
 
     return NULL;
@@ -208,20 +208,20 @@ void * move(Region * dest, Expr * o) {
     return retptr;
 }
 
-Scope * newScope(Scope * next) {
-    Scope * scope = malloc(sizeof(Scope));
-    if (scope == NULL) return throw(OOMErrorTag, NULL);
+Rho * newRho(Rho * next) {
+    Rho * rho = malloc(sizeof(Rho));
+    if (rho == NULL) return throw(OOMErrorTag, NULL);
 
-    scope->lexical = true;
-    scope->context = newTrie();
-    scope->next    = next;
+    rho->lexical = true;
+    rho->trie    = newTrie();
+    rho->next    = next;
 
-    return scope;
+    return rho;
 }
 
-void deleteScope(Scope * scope) {
-    freeTrie(&scope->context);
-    free(scope);
+void deleteRho(Rho * rho) {
+    freeTrie(&rho->trie);
+    free(rho);
 }
 
 Region * newRegion(Region * parent) {
@@ -232,7 +232,7 @@ Region * newRegion(Region * parent) {
     if (region == NULL) return throw(OOMErrorTag, NULL);
 
     region->index  = indexof(parent) + 1;
-    region->scope  = NULL;
+    region->rho    = NULL;
     region->pool   = newAVLTree();
     region->parent = parent;
 
@@ -259,17 +259,17 @@ const char * showExpr(void * value) {
     return buf;
 }
 
-void setVars(Scope * scope, ...) {
+void setVars(Rho * rho, ...) {
     va_list argv;
 
-    va_start(argv, scope);
+    va_start(argv, rho);
 
     for (;;) {
         const char * x = va_arg(argv, const char *);
         if (x == NULL) break;
 
         void * o = va_arg(argv, void *);
-        setVar(scope, x, o);
+        setVar(rho, x, o);
     }
 
     va_end(argv);

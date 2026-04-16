@@ -29,12 +29,12 @@
 
 #include <hrinlib/error.h>
 
-typedef struct _Scope Scope;
+typedef struct _Rho Rho;
 
-struct _Scope {
+struct _Rho {
+    Trie trie;
     bool lexical;
-    Trie context;
-    Scope * next;
+    Rho * next;
 };
 
 typedef struct _Region Region;
@@ -43,7 +43,7 @@ typedef struct _Region Region;
 
 struct _Region {
     int index;
-    Scope * scope;
+    Rho * rho;
     AVLTree pool;
     Region * parent;
 };
@@ -69,10 +69,10 @@ struct _ExprTag {
 
 extern ExprTag exprTag;
 
-void setVar(Scope *, const char *, void *);
-Expr * getVar(Scope *, const char *);
+void setVar(Rho *, const char *, void *);
+Expr * getVar(Rho *, const char *);
 
-void setVars(Scope *, ...);
+void setVars(Rho *, ...);
 
 void * newExpr(Region *, ExprTag *);
 void newExprImmortal(ExprTag *, ...);
@@ -89,8 +89,8 @@ bool equal(void *, void *);
 
 void initExpr(void);
 
-Scope * newScope(Scope *);
-void deleteScope(Scope *);
+Rho * newRho(Rho *);
+void deleteRho(Rho *);
 
 Region * newRegion(Region *);
 void deleteRegion(Region *);
@@ -104,8 +104,8 @@ static inline ExprTag * tagof(void * value)
 static inline Region * ownerof(void * value)
 { Expr * expr = value; return expr->owner; }
 
-static inline void copyScope(Scope * dest, Scope * src)
-{ copyTrie(&dest->context, &src->context); }
+static inline void copyRho(Rho * dest, Rho * src)
+{ copyTrie(&dest->trie, &src->trie); }
 
 const char * showExpr(void *);
 

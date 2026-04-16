@@ -25,11 +25,11 @@
 #include <hrinlib/cc.h>
 
 Region * initHrinlib(void) {
-    Scope * global = newScope(NULL);
+    Rho * global = newRho(NULL);
     global->lexical = false;
 
     Region * region = newRegion(NULL);
-    region->scope = global;
+    region->rho = global;
 
     initExternTag(region); // Everything below can rely on `newExtern`.
 

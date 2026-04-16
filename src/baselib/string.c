@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -63,5 +63,5 @@ void initStringTag(Region * region) {
     UNUSED(region);
 
     newExprImmortal(&exprTag, &exprStringTag, NULL);
-    setVar(region->scope, "string", &exprStringTag);
+    setVar(region->rho, "string", &exprStringTag);
 }

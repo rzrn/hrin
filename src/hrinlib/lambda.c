@@ -31,12 +31,12 @@ static void * applyMacro(Region * region, void * value, Array * xs) {
     ARITY(expr->vars.size, xs->size);
 
     Region * nested = newRegion(region); IFNRET(nested);
-    nested->scope = newScope(expr->scope); // TODO
+    nested->rho = newRho(expr->rho); // TODO
 
     void * retval = NULL;
 
     for (size_t i = 0; i < xs->size; i++)
-        setVar(nested->scope, getArray(&expr->vars, i), getArray(xs, i));
+        setVar(nested->rho, getArray(&expr->vars, i), getArray(xs, i));
 
     void * o = eval(nested, expr->value);
     if (o == NULL) goto finally;
@@ -46,7 +46,7 @@ static void * applyMacro(Region * region, void * value, Array * xs) {
     if (retval == NULL) goto finally;
     if (move(region, retval) == NULL) retval = NULL;
 
-    finally: deleteScope(nested->scope); deleteRegion(nested);
+    finally: deleteRho(nested->rho); deleteRegion(nested);
 
     return retval;
 }
@@ -57,7 +57,7 @@ static void * applyLambda(Region * region, void * value, Array * xs) {
     ARITY(expr->vars.size, xs->size);
 
     Region * nested = newRegion(region); IFNRET(nested);
-    nested->scope = newScope(expr->scope); // TODO
+    nested->rho = newRho(expr->rho); // TODO
 
     void * retval = NULL;
 
@@ -65,7 +65,7 @@ static void * applyLambda(Region * region, void * value, Array * xs) {
         void * o = eval(region, getArray(xs, i));
         if (o == NULL) goto finally;
 
-        setVar(nested->scope, getArray(&expr->vars, i), o);
+        setVar(nested->rho, getArray(&expr->vars, i), o);
     }
 
     retval = eval(nested, expr->value);
@@ -73,7 +73,7 @@ static void * applyLambda(Region * region, void * value, Array * xs) {
     if (retval == NULL) goto finally;
     if (move(region, retval) == NULL) retval = NULL;
 
-    finally: deleteScope(nested->scope); deleteRegion(nested);
+    finally: deleteRho(nested->rho); deleteRegion(nested);
 
     return retval;
 }
@@ -95,8 +95,8 @@ static size_t showMacro(char * buf, size_t size, void * value) {
 static void deleteLexical(void * value) {
     ExprLexical * expr = value;
 
-    if (expr->scope != NULL)
-        deleteScope(expr->scope);
+    if (expr->rho != NULL)
+        deleteRho(expr->rho);
 
     for (size_t i = 0; i < expr->vars.size; i++)
         free(getArray(&expr->vars, i));
@@ -120,7 +120,7 @@ static void * moveLexical(Region * dest, Region * src, void * value) {
 
     ExprLexical * expr = value; void * retptr = value;
 
-    if (moveTrie(dest, &expr->scope->context) == NULL)
+    if (moveTrie(dest, &expr->rho->trie) == NULL)
         retptr = NULL;
 
     if (move(dest, expr->value) == NULL)
@@ -149,18 +149,18 @@ ExprTag exprMacroTag = {
     .size   = sizeof(ExprLexical)
 };
 
-Scope * global = NULL; // TODO
+Rho * global = NULL; // TODO
 
 void * newLexical(ExprTag * tag, Region * region, Array vars, void * value) {
     ExprLexical * retval = newExpr(region, tag);
-    retval->scope = newScope(global); // TODO
+    retval->rho   = newRho(global); // TODO
     retval->vars  = vars;
     retval->value = value;
 
-    Scope * curr = region->scope;
+    Rho * curr = region->rho;
     while (curr != NULL) {
         if (curr->lexical)
-            copyScope(retval->scope, curr);
+            copyRho(retval->rho, curr);
 
         curr = curr->next;
     }
@@ -207,12 +207,12 @@ void * externExpand(Region * region, Array * xs) {
 }
 
 void initLexicalTags(Region * region) {
-    global = region->scope;
+    global = region->rho;
 
     newExprImmortal(&exprTag, &exprLambdaTag, &exprMacroTag, NULL);
 
     setVars(
-        region->scope,
+        region->rho,
         "λ",      newExtern(region, externLambda),
         "Λ",      newExtern(region, externMacro),
         "expand", newExtern(region, externExpand),

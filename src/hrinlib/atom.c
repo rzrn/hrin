@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 static void * evalAtom(Region * region, void * value) {
     ExprAtom * expr = value;
 
-    Expr * o = getVar(region->scope, expr->value);
+    Expr * o = getVar(region->rho, expr->value);
     return o == NULL ? throw(NameErrorTag, "%s is undefined", expr->value) : o;
 }
 
@@ -65,5 +65,5 @@ void initAtomTag(Region * region) {
     UNUSED(region);
 
     newExprImmortal(&exprTag, &exprAtomTag, NULL);
-    setVar(region->scope, "atom", &exprAtomTag);
+    setVar(region->rho, "atom", &exprAtomTag);
 }

@@ -222,7 +222,7 @@ void initCCTag(Region * region) {
     newExprImmortal(&exprTag, &exprCCTag, NULL);
 
     setVars(
-        region->scope,
+        region->rho,
         "cc",      &exprCCTag,
         "list",    newExtern(region, externList),
         "car",     newExtern(region, externCar),

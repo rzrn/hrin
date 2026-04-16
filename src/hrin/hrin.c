@@ -48,7 +48,7 @@ void * externDefine(Region * region, Array * xs) {
     Expr * o = eval(region, getArray(xs, 1)); IFNRET(o);
 
     IFNRET(move(rootRegion, o));
-    setVar(rootRegion->scope, i->value, o);
+    setVar(rootRegion->rho, i->value, o);
 
     return &exprNil;
 }
@@ -63,7 +63,7 @@ void * externDeflocal(Region * region, Array * xs) {
 
     Expr * o = eval(region, getArray(xs, 1)); IFNRET(o);
 
-    setVar(region->scope, i->value, o);
+    setVar(region->rho, i->value, o);
 
     return &exprNil;
 }
@@ -160,7 +160,7 @@ void scanModule(FILE * file) {
     Region * moduleRegion = newRegion(rootRegion);
     if (moduleRegion == NULL) { printError(); return; }
 
-    moduleRegion->scope = newScope(rootRegion->scope);
+    moduleRegion->rho = newRho(rootRegion->rho);
 
     for (;;) {
         Expr * e1 = takeExprToplevel(moduleRegion, file);
@@ -171,7 +171,7 @@ void scanModule(FILE * file) {
     }
 
     finally:
-    deleteScope(moduleRegion->scope);
+    deleteRho(moduleRegion->rho);
     deleteRegion(moduleRegion);
 }
 
@@ -181,7 +181,7 @@ ErrorTag scanLine(FILE * file) {
     Region * region = newRegion(rootRegion);
     if (region == NULL) return printError();
 
-    region->scope = newScope(rootRegion->scope);
+    region->rho = newRho(rootRegion->rho);
 
     Expr * e1 = takeExprToplevel(region, file);
     if (e1 == NULL) { retval = printError(); goto finally; }
@@ -198,7 +198,7 @@ ErrorTag scanLine(FILE * file) {
     printf("<<< %s\n", buf);
 
     finally:
-    deleteScope(region->scope);
+    deleteRho(region->rho);
     deleteRegion(region);
 
     return retval;
@@ -208,21 +208,21 @@ int main(int argc, char * argv[]) {
     initExpr();
 
     rootRegion = initHrinlib();
-    Scope * globalScope = rootRegion->scope;
+    Rho * globalRho = rootRegion->rho;
 
     initByteTag(rootRegion);
     initStringTag(rootRegion);
     initIntegerTag(rootRegion);
 
-    setVar(rootRegion->scope, "define",    newExtern(rootRegion, externDefine));
-    setVar(rootRegion->scope, "progn",     newExtern(rootRegion, externProgn));
-    setVar(rootRegion->scope, "deflocal",  newExtern(rootRegion, externDeflocal));
-    setVar(rootRegion->scope, "quote",     newExtern(rootRegion, externQuote));
-    setVar(rootRegion->scope, "eval",      newExtern(rootRegion, externEval));
-    setVar(rootRegion->scope, "print!",    newExtern(rootRegion, externPrint));
-    setVar(rootRegion->scope, "barrier",   newExtern(rootRegion, externBarrier));
-    setVar(rootRegion->scope, "tobyte",    newExtern(rootRegion, externToByte));
-    setVar(rootRegion->scope, "tagof",     newExtern(rootRegion, externTagof));
+    setVar(rootRegion->rho, "define",    newExtern(rootRegion, externDefine));
+    setVar(rootRegion->rho, "progn",     newExtern(rootRegion, externProgn));
+    setVar(rootRegion->rho, "deflocal",  newExtern(rootRegion, externDeflocal));
+    setVar(rootRegion->rho, "quote",     newExtern(rootRegion, externQuote));
+    setVar(rootRegion->rho, "eval",      newExtern(rootRegion, externEval));
+    setVar(rootRegion->rho, "print!",    newExtern(rootRegion, externPrint));
+    setVar(rootRegion->rho, "barrier",   newExtern(rootRegion, externBarrier));
+    setVar(rootRegion->rho, "tobyte",    newExtern(rootRegion, externToByte));
+    setVar(rootRegion->rho, "tagof",     newExtern(rootRegion, externTagof));
 
     for (int i = 1; i < argc; i++) {
         FILE * fin = fopen(argv[i], "r");
@@ -233,7 +233,7 @@ int main(int argc, char * argv[]) {
     while (scanLine(stdin) != EOFErrorTag);
 
     deleteRegion(rootRegion);
-    deleteScope(globalScope);
+    deleteRho(globalRho);
 
     return 0;
 }
