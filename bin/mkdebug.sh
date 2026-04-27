@@ -8,4 +8,9 @@ then
   find src/ -name '*.c' -exec makedepend -f ${DEPFILE} -Iinclude/ -- {} +
 fi
 
-make -f Makefile -f ${DEPFILE} CC=cc CFLAGS="-g -std=c99 -O0 -Wall -Wextra -pedantic" "$@"
+if [ -z "${OPTLEVEL}" ]
+then
+  OPTLEVEL=0
+fi
+
+make -f Makefile -f ${DEPFILE} CC=cc CFLAGS="-g -std=c99 -O${OPTLEVEL} -Wall -Wextra -pedantic" "$@"
