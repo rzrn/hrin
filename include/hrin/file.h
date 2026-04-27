@@ -20,6 +20,10 @@
 
 typedef struct _File File;
 
+int fileRowNo(File *);
+int fileColNo(File *);
+const char * fileName(File *);
+
 int fileTakeChar(File *);
 void fileGiveChar(File *, int);
 

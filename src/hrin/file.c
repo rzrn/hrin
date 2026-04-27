@@ -25,13 +25,43 @@ struct _File {
     size_t size;
     size_t length;
     char * buffer;
+    int row, col;
+    const char * name;
 };
 
+int fileRowNo(File * file) {
+    return file->row;
+}
+
+int fileColNo(File * file) {
+    return file->col;
+}
+
+const char * fileName(File * file) {
+    return file->name;
+}
+
 int fileTakeChar(File * file) {
-    return fgetc(file->fd);
+    int recv = fgetc(file->fd);
+
+    if (recv == '\n') {
+        file->col = 1;
+        file->row++;
+    } else {
+        file->col++;
+    }
+
+    return recv;
 }
 
 void fileGiveChar(File * file, int recv) {
+    if (recv == '\n') {
+        file->col = 1;
+        file->row--;
+    } else {
+        file->col--;
+    }
+
     ungetc(recv, file->fd);
 }
 
@@ -77,6 +107,9 @@ File * fileStandardInput(void) {
     file->size   = 0;
     file->length = 0;
     file->buffer = NULL;
+    file->row    = 1;
+    file->col    = 1;
+    file->name   = "<stdin>";
 
     return file;
 }
@@ -92,6 +125,9 @@ File * fileReadOnly(const char * filepath) {
     file->size   = 0;
     file->length = 0;
     file->buffer = NULL;
+    file->row    = 1;
+    file->col    = 1;
+    file->name   = filepath;
 
     return file;
 }
