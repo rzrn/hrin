@@ -144,30 +144,32 @@ void * externTagof(Region * region, Array * xs) {
     return tagof(o);
 }
 
-ErrorTag printError(void) {
+ErrorTag printError(File * file) {
     ErrorTag error = getThrownError();
     if (error == NULL) return NULL;
 
     const char * errorBuffer = getErrorBuffer();
 
-    if (strlen(errorBuffer) > 0) fprintf(stderr, "!!! %s: %s\n", error, errorBuffer);
-    else fprintf(stderr, "!!! %s\n", error);
+    if (strlen(errorBuffer) > 0)
+        fprintf(stderr, "%s:%d:%d: %s: %s\n", fileName(file), fileRowNo(file), fileColNo(file), error, errorBuffer);
+    else
+        fprintf(stderr, "%s:%d:%d: %s\n", fileName(file), fileRowNo(file), fileColNo(file), error);
 
     return error;
 }
 
 void scanModule(File * file) {
     Region * moduleRegion = newRegion(rootRegion);
-    if (moduleRegion == NULL) { printError(); return; }
+    if (moduleRegion == NULL) { printError(file); return; }
 
     moduleRegion->rho = newRho(rootRegion->rho);
 
     for (;;) {
         Expr * e1 = takeExprToplevel(moduleRegion, file);
-        if (e1 == NULL) { printError(); goto finally; }
+        if (e1 == NULL) { printError(file); goto finally; }
 
         Expr * e2 = eval(moduleRegion, e1);
-        if (e2 == NULL) { printError(); goto finally; }
+        if (e2 == NULL) { printError(file); goto finally; }
     }
 
     finally:
@@ -179,12 +181,12 @@ ErrorTag scanLine(File * file) {
     ErrorTag retval = NULL;
 
     Region * region = newRegion(rootRegion);
-    if (region == NULL) return printError();
+    if (region == NULL) return printError(file);
 
     region->rho = newRho(rootRegion->rho);
 
     Expr * e1 = takeExprToplevel(region, file);
-    if (e1 == NULL) { retval = printError(); goto finally; }
+    if (e1 == NULL) { retval = printError(file); goto finally; }
 
     char buf[1024];
 
@@ -192,7 +194,7 @@ ErrorTag scanLine(File * file) {
     printf(">>> %s\n", buf);
 
     Expr * e2 = eval(region, e1);
-    if (e2 == NULL) { retval = printError(); goto finally; }
+    if (e2 == NULL) { retval = printError(file); goto finally; }
 
     show(buf, sizeof(buf), e2);
     printf("<<< %s\n", buf);
@@ -227,7 +229,7 @@ int main(int argc, char * argv[]) {
     for (int i = 1; i < argc; i++) {
         File * file = fileReadOnly(argv[i]);
 
-        if (file == NULL) fprintf(stderr, "Cannot open “%s”\n", argv[i]);
+        if (file == NULL) fprintf(stderr, "%s: %s: No such file or directory\n", argv[0], argv[i]);
         else { scanModule(file); fileClose(file); }
     }
 
