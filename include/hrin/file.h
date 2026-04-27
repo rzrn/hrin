@@ -18,14 +18,7 @@
 #ifndef HRIN_FILE_H
 #define HRIN_FILE_H
 
-#include <stdio.h>
-
-typedef struct {
-    FILE * fd;
-    size_t size;
-    size_t length;
-    char * buffer;
-} File;
+typedef struct _File File;
 
 int fileTakeChar(File *);
 void fileGiveChar(File *, int);
@@ -36,8 +29,8 @@ int fileNextChar(File *);
 char * fileTakeBuffer(File *);
 void fileDropBuffer(File *);
 
-void fileStandardInput(File *);
-int fileReadOnly(const char *, File *);
+File * fileStandardInput(void);
+File * fileReadOnly(const char *);
 void fileClose(File *);
 
 #endif

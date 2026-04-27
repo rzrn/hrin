@@ -225,18 +225,17 @@ int main(int argc, char * argv[]) {
     setVar(rootRegion->rho, "tagof",     newExtern(rootRegion, externTagof));
 
     for (int i = 1; i < argc; i++) {
-        File file;
+        File * file = fileReadOnly(argv[i]);
 
-        if (fileReadOnly(argv[i], &file) < 0)
-            fprintf(stderr, "Cannot open “%s”\n", argv[i]);
-        else { scanModule(&file); fileClose(&file); }
+        if (file == NULL) fprintf(stderr, "Cannot open “%s”\n", argv[i]);
+        else { scanModule(file); fileClose(file); }
     }
 
     {
-        File file; fileStandardInput(&file);
-        while (scanLine(&file) != EOFErrorTag);
+        File * file = fileStandardInput();
+        while (scanLine(file) != EOFErrorTag);
 
-        fileDropBuffer(&file);
+        fileClose(file);
     }
 
     deleteRegion(rootRegion);

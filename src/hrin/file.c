@@ -15,9 +15,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include <hrin/file.h>
+
+struct _File {
+    FILE * fd;
+    size_t size;
+    size_t length;
+    char * buffer;
+};
 
 int fileTakeChar(File * file) {
     return fgetc(file->fd);
@@ -37,7 +45,7 @@ void fileSaveChar(File * file, char ch) {
 }
 
 int fileNextChar(File * file) {
-    int recv = fgetc(file->fd);
+    int recv = fileTakeChar(file);
     fileSaveChar(file, recv);
     return recv;
 }
@@ -61,26 +69,35 @@ void fileDropBuffer(File * file) {
     file->buffer = NULL;
 }
 
-void fileStandardInput(File * file) {
+File * fileStandardInput(void) {
+    File * file = malloc(sizeof(File));
+    if (file == NULL) return NULL;
+
     file->fd     = stdin;
     file->size   = 0;
     file->length = 0;
     file->buffer = NULL;
+
+    return file;
 }
 
-int fileReadOnly(const char * filepath, File * file) {
+File * fileReadOnly(const char * filepath) {
     FILE * fd = fopen(filepath, "r");
-    if (fd == NULL) return -1;
+    if (fd == NULL) return NULL;
+
+    File * file = malloc(sizeof(File));
+    if (file == NULL) return NULL;
 
     file->fd     = fd;
     file->size   = 0;
     file->length = 0;
     file->buffer = NULL;
 
-    return 0;
+    return file;
 }
 
 void fileClose(File * file) {
     fileDropBuffer(file);
     fclose(file->fd);
+    free(file);
 }
