@@ -58,7 +58,7 @@ typedef struct {
 
 struct _ExprTag {
     Expr _expr;
-    void * (* move)(Region * dest, Region * src, void *);
+    void * (* move)(Region *, void *);
     void * (* apply)(Region *, void *, Array *);
     void * (* eval)(Region *, void *);
     bool (* equal)(void *, void *);
@@ -113,7 +113,7 @@ bool equalByRef(void *, void *);
 void * applyThrowError(Region *, void *, Array *);
 void * trivEval(Region *, void *);
 void trivDelete(void *);
-void * trivMove(Region * dest, Region * src, void *);
+void * trivMove(Region *, void *);
 
 static inline size_t ellipsis(char * buf)
 { strcpy(buf, "..."); return 3; }

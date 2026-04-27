@@ -115,9 +115,7 @@ static inline void * moveTrie(Region * region, Trie * T) {
     return retptr;
 }
 
-static void * moveLexical(Region * dest, Region * src, void * value) {
-    UNUSED(src);
-
+static void * moveLexical(Region * dest, void * value) {
     ExprLexical * expr = value; void * retptr = value;
 
     if (moveTrie(dest, &expr->rho->trie) == NULL)

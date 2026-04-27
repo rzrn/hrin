@@ -83,8 +83,8 @@ void trivDelete(void * value) {
     UNUSED(value);
 }
 
-void * trivMove(Region * dest, Region * src, void * value) {
-    UNUSED(dest); UNUSED(src); UNUSED(value);
+void * trivMove(Region * dest, void * value) {
+    UNUSED(dest); UNUSED(value);
 
     return value;
 }
@@ -212,7 +212,7 @@ void * move(Region * dest, Expr * o) {
 
     void * retptr = o;
 
-    if (o->tag->move(dest, src, o) == NULL)
+    if (o->tag->move(dest, o) == NULL)
         retptr = NULL;
 
     if (dest->index < o->barrier) {

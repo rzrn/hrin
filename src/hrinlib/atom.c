@@ -40,8 +40,8 @@ static void deleteAtom(void * value) {
     free(expr->value);
 }
 
-static void * moveAtom(Region * dest, Region * src, void * value) {
-    UNUSED(dest); UNUSED(src); UNUSED(value);
+static void * moveAtom(Region * dest, void * value) {
+    UNUSED(dest); UNUSED(value);
 
     return value;
 }

@@ -105,9 +105,7 @@ static void deleteCC(void * value) {
     UNUSED(value);
 }
 
-static void * moveCC(Region * dest, Region * src, void * value) {
-    UNUSED(src);
-
+static void * moveCC(Region * dest, void * value) {
     ExprCC * expr = value; void * retptr = value;
 
     if (move(dest, expr->car) == NULL) retptr = NULL;
