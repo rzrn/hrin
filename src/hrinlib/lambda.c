@@ -167,7 +167,7 @@ void * newLexical(ExprTag * tag, Region * region, Array vars, void * value) {
 }
 
 void * externLexical(ExprTag * tag, Region * region, Array * xs) {
-    if (xs->size <= 0) return throw(TypeErrorTag, "no arguments were given");
+    if (xs->size <= 0) return throw(TypeErrorTag, "No arguments were given");
 
     for (size_t i = 0; i < xs->size - 1; i++) {
         if (tagof(getArray(xs, i)) != &exprAtomTag)

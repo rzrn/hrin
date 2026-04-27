@@ -61,7 +61,7 @@ void * takeExprSepBy1(Region * region, File * file, void * headval, int toksep, 
         } else if (separator == tokuntil) {
             curr->cdr = newCC(region, argval, &exprNil);
             return retval;
-        } else return throw(SyntaxErrorTag, "expected semicolon or right bracket");
+        } else return throw(SyntaxErrorTag, "Expected semicolon or right bracket");
     }
 }
 
@@ -77,7 +77,7 @@ void * takeExpr(Region * region, File * file) {
             if (isdigit(outbuf[0]) || outbuf[0] == '-' || outbuf[0] == '+') {
                 char * endptr; long long int num = strtoll(outbuf, &endptr, 10);
                 if (endptr[0] == '\0') headval = newInteger(region, num);
-                else throw(SyntaxErrorTag, "invalid integer: %s", outbuf);
+                else throw(SyntaxErrorTag, "Invalid integer: %s", outbuf);
 
                 free(outbuf);
             } else headval = newAtom(region, outbuf);
@@ -107,7 +107,7 @@ void * takeExpr(Region * region, File * file) {
 
         if (token == TokenEof) return throw(EOFErrorTag, NULL);
 
-        return throw(SyntaxErrorTag, "unexpected token");
+        return throw(SyntaxErrorTag, "Unexpected token");
     }
 }
 
@@ -118,7 +118,7 @@ void * takeExprToplevel(Region * region, File * file) {
     if (popToken(file) == TokenSemicolon) return retval;
 
     for (;;) switch (popToken(file)) {
-        case TokenEof: case TokenSemicolon: return throw(SyntaxErrorTag, "expected semicolon");
+        case TokenEof: case TokenSemicolon: return throw(SyntaxErrorTag, "Expected semicolon");
         case TokenIdent: case TokenLiteral: free(getLexerBuffer());
     }
 }

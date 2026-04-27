@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,6 @@ ErrorTag getThrownError(void);
 
 extern ErrorTag EOFErrorTag, SyntaxErrorTag, ApplyErrorTag, UnknownErrorTag, NameErrorTag, OOMErrorTag, TypeErrorTag, RegionErrorTag;
 
-#define ARITY(expected, given) do { if ((expected) != (given)) return throw(TypeErrorTag, "expected %zu argument(s) but %zu were given", (expected), (given)); } while (false)
+#define ARITY(expected, given) do { if ((expected) != (given)) return throw(TypeErrorTag, "Expected %zu argument(s) but %zu were given", (expected), (given)); } while (false)
 
 #endif

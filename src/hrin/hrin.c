@@ -115,15 +115,15 @@ void * externBarrier(Region * region, Array * xs) {
             ExprInteger * i = evalEnsureInteger(region, getArray(xs, 1)); IFNRET(i);
 
             if (o->owner == NULL || o->owner->index < i->value) return throw(
-                RegionErrorTag, "barrier cannot be set before the owning region"
+                RegionErrorTag, "Barrier cannot be set before the owning region"
             );
             if (i->value < o->barrier) return throw(
-                RegionErrorTag, "barrier cannot be set after the existing barrier"
+                RegionErrorTag, "Barrier cannot be set after the existing barrier"
             );
 
             o->barrier = i->value; return &exprNil;
         }
-        default: return throw(TypeErrorTag, "expected at most 2 arguments but %zu were given", xs->size);
+        default: return throw(TypeErrorTag, "Expected at most 2 arguments but %zu were given", xs->size);
     }
 }
 

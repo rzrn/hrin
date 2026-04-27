@@ -131,7 +131,7 @@ static inline void takeOwnership(Region * region, Expr * o) {
 
 void * newExpr(Region * region, ExprTag * tag) {
     if (tag->size == 0) return throw(
-        RegionErrorTag, "cannot allocate static type on the heap"
+        RegionErrorTag, "Cannot allocate static type on the heap"
     );
 
     Expr * o = malloc(tag->size);
@@ -202,7 +202,7 @@ void * move(Region * dest, Expr * o) {
 
     if (dest == NULL) {
         // E.g., this is possible for `setcar!` to an immortal cons cell.
-        throw(RegionErrorTag, "attempt to immortalize heap-allocated value: %s", showExpr(o));
+        throw(RegionErrorTag, "Attempt to immortalize heap-allocated value: %s", showExpr(o));
         invalidate(o);
         return NULL;
     }
@@ -216,7 +216,7 @@ void * move(Region * dest, Expr * o) {
         retptr = NULL;
 
     if (dest->index < o->barrier) {
-        throw(RegionErrorTag, "attempt to move value beyond its barrier: %s", showExpr(o));
+        throw(RegionErrorTag, "Attempt to move value beyond its barrier: %s", showExpr(o));
         invalidate(o);
         retptr = NULL;
     }
@@ -242,7 +242,7 @@ void deleteRho(Rho * rho) {
 
 Region * newRegion(Region * parent) {
     if (indexof(parent) == INDEX_MAX)
-        return throw(OOMErrorTag, "maximum region depth exceeded");
+        return throw(OOMErrorTag, "Maximum region depth exceeded");
 
     Region * region = malloc(sizeof(Region));
     if (region == NULL) return throw(OOMErrorTag, NULL);
