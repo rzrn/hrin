@@ -17,7 +17,7 @@
 
 #include <stdlib.h>
 
-#include <hrin/io.h>
+#include <hrin/file.h>
 
 int fileTakeChar(File * file) {
     return fgetc(file->fd);

@@ -20,7 +20,7 @@
 #include <ctype.h>
 
 #include <hrin/lexer.h>
-#include <hrin/io.h>
+#include <hrin/file.h>
 
 static int lookahead(int recv) {
     if (isspace(recv)) return TokenError;

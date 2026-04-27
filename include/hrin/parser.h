@@ -20,7 +20,7 @@
 
 #include <hrinlib/expr.h>
 
-#include <hrin/io.h>
+#include <hrin/file.h>
 
 void * takeExpr(Region *, File *);
 void * takeExprToplevel(Region *, File *);

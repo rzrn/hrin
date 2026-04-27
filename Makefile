@@ -31,7 +31,7 @@ bin/hrinlib.a: src/hrinlib/atom.o src/hrinlib/basic.o src/hrinlib/boolean.o\
                src/hrinlib/extern.o src/hrinlib/lambda.o src/hrinlib/nil.o
 	$(AR) $(ARFLAGS) $@ $?
 
-bin/hrin.a: src/hrin/hrin.o src/hrin/io.o src/hrin/lexer.o src/hrin/parser.o
+bin/hrin.a: src/hrin/hrin.o src/hrin/file.o src/hrin/lexer.o src/hrin/parser.o
 	$(AR) $(ARFLAGS) $@ $?
 
 clean:

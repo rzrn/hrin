@@ -18,7 +18,7 @@
 #ifndef HRIN_LEXER_H
 #define HRIN_LEXER_H
 
-#include <hrin/io.h>
+#include <hrin/file.h>
 
 enum {
     TokenEof,
