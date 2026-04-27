@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #ifndef HRIN_LEXER_H
 #define HRIN_LEXER_H
 
-#include <stdio.h>
+#include <hrin/io.h>
 
 enum {
     TokenEof,
@@ -36,6 +36,6 @@ enum {
 char * getLexerBuffer(void);
 
 void pushToken(int token);
-int popToken(FILE *);
+int popToken(File *);
 
 #endif

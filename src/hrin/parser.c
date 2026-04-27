@@ -31,17 +31,17 @@
 #include <hrin/parser.h>
 #include <hrin/lexer.h>
 
-static inline bool tokenLookahead(FILE * stream, int expected) {
-    int token = popToken(stream);
+static inline bool tokenLookahead(File * file, int expected) {
+    int token = popToken(file);
     if (token == expected) return true;
 
     pushToken(token); return false;
 }
 
-void * takeExprSepBy1(Region * region, FILE * stream, void * headval, int toksep, int tokuntil) {
+void * takeExprSepBy1(Region * region, File * file, void * headval, int toksep, int tokuntil) {
     ExprCC * retval = newCC(region, headval, &exprNil);
 
-    if (tokenLookahead(stream, tokuntil)) {
+    if (tokenLookahead(file, tokuntil)) {
         retval->cdr = &exprNil;
         return retval;
     }
@@ -49,10 +49,10 @@ void * takeExprSepBy1(Region * region, FILE * stream, void * headval, int toksep
     ExprCC * curr = retval;
 
     for (;;) {
-        Expr * argval = takeExpr(region, stream);
+        Expr * argval = takeExpr(region, file);
         if (argval == NULL) return NULL;
 
-        int separator = popToken(stream);
+        int separator = popToken(file);
 
         if (separator == toksep) {
             ExprCC * next = newCC(region, argval, &exprNil);
@@ -65,9 +65,9 @@ void * takeExprSepBy1(Region * region, FILE * stream, void * headval, int toksep
     }
 }
 
-void * takeExpr(Region * region, FILE * stream) {
+void * takeExpr(Region * region, File * file) {
     for (;;) {
-        int token = popToken(stream);
+        int token = popToken(file);
 
         if (token == TokenIdent) {
             char * outbuf = getLexerBuffer();
@@ -84,10 +84,10 @@ void * takeExpr(Region * region, FILE * stream) {
 
             if (headval == NULL) return NULL;
 
-            int nextToken = popToken(stream);
+            int nextToken = popToken(file);
 
             if (nextToken == TokenLbracket)
-                return takeExprSepBy1(region, stream, headval, TokenSemicolon, TokenRbracket);
+                return takeExprSepBy1(region, file, headval, TokenSemicolon, TokenRbracket);
             else {
                 pushToken(nextToken);
                 return headval;
@@ -96,7 +96,7 @@ void * takeExpr(Region * region, FILE * stream) {
 
         if (token == TokenLbracket) {
             void * headval = newAtom(region, dup("list"));
-            return takeExprSepBy1(region, stream, headval, TokenSemicolon, TokenRbracket);
+            return takeExprSepBy1(region, file, headval, TokenSemicolon, TokenRbracket);
         }
 
         if (token == TokenLiteral) {
@@ -111,13 +111,13 @@ void * takeExpr(Region * region, FILE * stream) {
     }
 }
 
-void * takeExprToplevel(Region * region, FILE * stream) {
-    void * retval = takeExpr(region, stream);
+void * takeExprToplevel(Region * region, File * file) {
+    void * retval = takeExpr(region, file);
     if (retval == NULL) return NULL;
 
-    if (popToken(stream) == TokenSemicolon) return retval;
+    if (popToken(file) == TokenSemicolon) return retval;
 
-    for (;;) switch (popToken(stream)) {
+    for (;;) switch (popToken(file)) {
         case TokenEof: case TokenSemicolon: return throw(SyntaxErrorTag, "expected semicolon");
         case TokenIdent: case TokenLiteral: free(getLexerBuffer());
     }

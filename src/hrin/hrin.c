@@ -156,7 +156,7 @@ ErrorTag printError(void) {
     return error;
 }
 
-void scanModule(FILE * file) {
+void scanModule(File * file) {
     Region * moduleRegion = newRegion(rootRegion);
     if (moduleRegion == NULL) { printError(); return; }
 
@@ -175,7 +175,7 @@ void scanModule(FILE * file) {
     deleteRegion(moduleRegion);
 }
 
-ErrorTag scanLine(FILE * file) {
+ErrorTag scanLine(File * file) {
     ErrorTag retval = NULL;
 
     Region * region = newRegion(rootRegion);
@@ -225,12 +225,19 @@ int main(int argc, char * argv[]) {
     setVar(rootRegion->rho, "tagof",     newExtern(rootRegion, externTagof));
 
     for (int i = 1; i < argc; i++) {
-        FILE * fin = fopen(argv[i], "r");
-        if (fin == NULL) fprintf(stderr, "Cannot open “%s”\n", argv[i]);
-        else { scanModule(fin); fclose(fin); }
+        File file;
+
+        if (fileReadOnly(argv[i], &file) < 0)
+            fprintf(stderr, "Cannot open “%s”\n", argv[i]);
+        else { scanModule(&file); fileClose(&file); }
     }
 
-    while (scanLine(stdin) != EOFErrorTag);
+    {
+        File file; fileStandardInput(&file);
+        while (scanLine(&file) != EOFErrorTag);
+
+        fileDropBuffer(&file);
+    }
 
     deleteRegion(rootRegion);
     deleteRho(globalRho);

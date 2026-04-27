@@ -18,11 +18,11 @@
 #ifndef HRIN_PARSER_H
 #define HRIN_PARSER_H
 
-#include <stdio.h>
-
 #include <hrinlib/expr.h>
 
-void * takeExpr(Region *, FILE *);
-void * takeExprToplevel(Region *, FILE *);
+#include <hrin/io.h>
+
+void * takeExpr(Region *, File *);
+void * takeExprToplevel(Region *, File *);
 
 #endif

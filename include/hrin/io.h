@@ -1,5 +1,5 @@
 /*
-    Copyright © 2024–2025 rzrn
+    Copyright © 2024–2026 rzrn
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,9 +20,24 @@
 
 #include <stdio.h>
 
-void fpush(char);
-int fnext(FILE *);
-char * fdup(void);
-void fdrop(void);
+typedef struct {
+    FILE * fd;
+    size_t size;
+    size_t length;
+    char * buffer;
+} File;
+
+int fileTakeChar(File *);
+void fileGiveChar(File *, int);
+
+void fileSaveChar(File *, char);
+int fileNextChar(File *);
+
+char * fileTakeBuffer(File *);
+void fileDropBuffer(File *);
+
+void fileStandardInput(File *);
+int fileReadOnly(const char *, File *);
+void fileClose(File *);
 
 #endif

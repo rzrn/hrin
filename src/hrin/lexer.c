@@ -16,6 +16,7 @@
 */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <ctype.h>
 
 #include <hrin/lexer.h>
@@ -37,24 +38,24 @@ static int lookahead(int recv) {
     }
 }
 
-int lexerNextToken(FILE * stream, char * outbuf[]) {
-    int recv; do recv = fgetc(stream); while (isspace(recv));
+static int lexerNextToken(File * file, char * outbuf[]) {
+    int recv; do recv = fileTakeChar(file); while (isspace(recv));
 
     int token = lookahead(recv);
 
     if (token < 0) {
-        fpush(recv);
+        fileSaveChar(file, recv);
 
         while (lookahead(recv) < 0)
-            recv = fnext(stream);
+            recv = fileNextChar(file);
 
-        ungetc(recv, stream);
+        fileGiveChar(file, recv);
 
-        *outbuf = fdup(); return TokenIdent;
+        *outbuf = fileTakeBuffer(file); return TokenIdent;
     } else if (token == TokenLiteral) {
-        for (;;) switch (fnext(stream)) {
-            case EOF: fdrop(); return TokenError;
-            case '"': *outbuf = fdup(); return TokenLiteral;
+        for (;;) switch (fileNextChar(file)) {
+            case EOF: fileDropBuffer(file); return TokenError;
+            case '"': *outbuf = fileTakeBuffer(file); return TokenLiteral;
         }
     } else return token;
 }
@@ -69,8 +70,8 @@ void pushToken(int token) {
     if (bufferedToken < 0) bufferedToken = token;
 }
 
-int popToken(FILE * stream) {
-    if (bufferedToken < 0) return lexerNextToken(stream, &lexerBuffer);
+int popToken(File * file) {
+    if (bufferedToken < 0) return lexerNextToken(file, &lexerBuffer);
 
     int retval = bufferedToken; bufferedToken = -1; return retval;
 }

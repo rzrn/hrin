@@ -19,33 +19,68 @@
 
 #include <hrin/io.h>
 
-static size_t capacity = 0, length = 0;
-static char * outbuf = NULL;
-
-void fpush(char value) {
-    if (capacity <= length) {
-        capacity += 512;
-        outbuf = realloc(outbuf, capacity);
-    }
-
-    outbuf[length++] = value;
+int fileTakeChar(File * file) {
+    return fgetc(file->fd);
 }
 
-int fnext(FILE * stream) {
-    int recv = fgetc(stream);
-    fpush(recv);
+void fileGiveChar(File * file, int recv) {
+    ungetc(recv, file->fd);
+}
+
+void fileSaveChar(File * file, char ch) {
+    if (file->size <= file->length) {
+        file->size += 512;
+        file->buffer = realloc(file->buffer, file->size);
+    }
+
+    file->buffer[file->length++] = ch;
+}
+
+int fileNextChar(File * file) {
+    int recv = fgetc(file->fd);
+    fileSaveChar(file, recv);
     return recv;
 }
 
-char * fdup(void) {
-    char * retbuf = realloc(outbuf, length);
-    retbuf[length - 1] = '\0';
+char * fileTakeBuffer(File * file) {
+    char * retbuf = realloc(file->buffer, file->length);
+    retbuf[file->length - 1] = '\0';
 
-    capacity = length = 0; outbuf = NULL;
+    file->size   = 0;
+    file->length = 0;
+    file->buffer = NULL;
+
     return retbuf;
 }
 
-void fdrop(void) {
-    capacity = length = 0;
-    free(outbuf); outbuf = NULL;
+void fileDropBuffer(File * file) {
+    free(file->buffer);
+
+    file->size   = 0;
+    file->length = 0;
+    file->buffer = NULL;
+}
+
+void fileStandardInput(File * file) {
+    file->fd     = stdin;
+    file->size   = 0;
+    file->length = 0;
+    file->buffer = NULL;
+}
+
+int fileReadOnly(const char * filepath, File * file) {
+    FILE * fd = fopen(filepath, "r");
+    if (fd == NULL) return -1;
+
+    file->fd     = fd;
+    file->size   = 0;
+    file->length = 0;
+    file->buffer = NULL;
+
+    return 0;
+}
+
+void fileClose(File * file) {
+    fileDropBuffer(file);
+    fclose(file->fd);
 }
