@@ -40,12 +40,6 @@ static void deleteAtom(void * value) {
     free(expr->value);
 }
 
-static void * moveAtom(Region * dest, void * value) {
-    UNUSED(dest); UNUSED(value);
-
-    return value;
-}
-
 static bool equalAtom(void * value1, void * value2) {
     ExprAtom * expr1 = value1, * expr2 = value2;
     return strcmp(expr1->value, expr2->value) == 0;
@@ -56,7 +50,7 @@ ExprTag exprAtomTag = {
     .apply  = applyThrowError,
     .show   = showAtom,
     .delete = deleteAtom,
-    .move   = moveAtom,
+    .move   = trivMove,
     .equal  = equalAtom,
     .size   = sizeof(ExprAtom)
 };
